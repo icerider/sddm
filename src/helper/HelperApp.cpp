@@ -18,6 +18,7 @@
  *
  */
 
+#include "Configuration.h"
 #include "HelperApp.h"
 #include "Backend.h"
 #include "UserSession.h"
@@ -127,6 +128,11 @@ namespace SDDM {
         m_user = m_backend->userName();
         QProcessEnvironment env = authenticated(m_user);
 
+        if(!runExternalScript(mainConfig.XDisplay.LoginCommand.get())) {
+            exit(Auth::HELPER_SESSION_ERROR);
+            return;
+        }
+
         if (!m_session->path().isEmpty()) {
             env.insert(m_session->processEnvironment());
             m_session->setProcessEnvironment(env);
@@ -144,7 +150,30 @@ namespace SDDM {
         return;
     }
 
+    bool HelperApp::runExternalScript(const QString &command) {
+        bool ret = true;
+        QProcessEnvironment env = authenticated(m_user);
+        env.insert(m_session->processEnvironment());
+        if (!command.isEmpty() &&
+            env.value(QStringLiteral("XDG_SESSION_CLASS")) == QStringLiteral("user")) {
+            QProcess *displayStopScript = new QProcess();
+            env.insert(QStringLiteral("USER"), m_user);
+            env.insert(QStringLiteral("HOME"), QStringLiteral("/root"));
+            displayStopScript->setProcessEnvironment(env);
+            // start script
+            displayStopScript->start(command);
+            if(!displayStopScript->waitForFinished(-1) || 
+                displayStopScript->exitCode() != 0) {
+                ret = false;
+            }
+            displayStopScript->deleteLater();
+        }
+        return ret;
+    }
+
     void HelperApp::sessionFinished(int status) {
+        // create logout script process
+        runExternalScript(mainConfig.XDisplay.LogoutCommand.get());
         exit(status);
     }
 

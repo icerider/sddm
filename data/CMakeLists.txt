@@ -11,6 +11,8 @@ install(FILES
     "scripts/Xsession"
     "scripts/Xsetup"
     "scripts/Xstop"
+    "scripts/Xlogin"
+    "scripts/Xlogout"
     "scripts/wayland-session"
     DESTINATION "${DATA_INSTALL_DIR}/scripts"
     PERMISSIONS

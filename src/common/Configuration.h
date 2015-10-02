@@ -64,6 +64,10 @@ namespace SDDM {
                                                                                                    "A script to execute when starting the display server"));
             Entry(DisplayStopCommand,  QString,     _S(DATA_INSTALL_DIR "/scripts/Xstop"),      _S("Xstop script path\n"
                                                                                                    "A script to execute when stopping the display server"));
+            Entry(LoginCommand,  QString,     _S(DATA_INSTALL_DIR "/scripts/Xlogin"),      _S("Xlogin script path\n"
+                                                                                                   "A script to execute before user login"));
+            Entry(LogoutCommand,  QString,     _S(DATA_INSTALL_DIR "/scripts/Xlogout"),      _S("Xlogout script path\n"
+                                                                                                   "A script to execute before user logout"));
             Entry(MinimumVT,           int,         MINIMUM_VT,                                 _S("Minimum VT\n"
                                                                                                    "The lowest virtual terminal number that will be used."));
         );
